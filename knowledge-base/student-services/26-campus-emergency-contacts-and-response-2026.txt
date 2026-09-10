@@ -1,0 +1,114 @@
+NORTHBRIDGE INSTITUTE OF TECHNOLOGY
+CAMPUS EMERGENCY CONTACTS AND INITIAL RESPONSE
+
+Document ID: NIT-SAF-EMR-2026
+Maintained by: Campus Safety Office
+Published: 24 July 2026
+Effective from: 1 August 2026
+Version: 1.0
+
+USE OF THIS DOCUMENT
+
+This document provides the first contact and immediate action for common campus emergencies. It does not replace instructions from emergency services, Campus Security, medical personnel, fire wardens or other authorised responders.
+
+When calling, state your name, exact location, the nature of the emergency, the number of people affected and a telephone number on which you can be reached. Do not end the call until the responder confirms that the required information has been received.
+
+PRIMARY EMERGENCY CONTACTS
+
+Campus Security emergency line: Extension 2000
+Campus Security external number: +91 80000 02000
+Campus medical centre: Extension 2010
+Hostel duty supervisor: Extension 2401
+Fire and evacuation control desk: Extension 2020
+Facilities emergency desk: Extension 2030
+Information Technology security incidents: Extension 2601
+
+The external numbers and email domains in this synthetic document are for project testing and do not connect to real services.
+
+IMMEDIATE THREAT TO LIFE OR SAFETY
+
+Call Campus Security at extension 2000. Give the exact building, floor, room or nearby landmark. Follow the instructions of the responder and keep a safe distance from the hazard.
+
+If national or local emergency services have already been contacted, inform Campus Security so that responders can be directed through the correct gate. Do not assume that another person has made the call.
+
+MEDICAL EMERGENCY
+
+Call the Campus Medical Centre at extension 2010 and Campus Security at extension 2000 when urgent transport or crowd control may be needed.
+
+Do not move a seriously injured person unless the location is unsafe. Do not give medicine, food or drink unless instructed by a qualified responder. If trained, provide first aid within the limits of that training. Send another person to guide responders to the location.
+
+FIRE, SMOKE OR BURNING SMELL
+
+Activate the nearest fire alarm if it has not already sounded. Leave by the marked evacuation route and use stairs rather than lifts. Close doors behind you if this can be done without delay.
+
+Call extension 2020 or Campus Security at extension 2000 from a safe location. Report the building, floor and visible conditions. Do not return for personal belongings and do not re-enter until an authorised responder declares the area safe.
+
+SUSPICIOUS PACKAGE OR OBJECT
+
+Do not touch, move, open or photograph the object at close range. Move away, discourage others from approaching and call Campus Security at extension 2000.
+
+Do not use a radio or mobile telephone immediately beside a suspicious object. Follow the distance and evacuation instructions given by Campus Security.
+
+THREATENING BEHAVIOUR OR VIOLENCE
+
+Move to a safer location if possible and call extension 2000. Provide a description of the person, last known location, direction of movement and any visible weapon without placing yourself at further risk.
+
+Do not confront or attempt to restrain the person unless immediate defensive action is unavoidable. Preserve relevant messages or records for authorised investigators.
+
+MISSING OR AT-RISK STUDENT
+
+For an immediate concern about a student's safety, contact Campus Security at extension 2000. Provide the student's name, student number if known, last confirmed location, time last seen, contact attempts and reason for concern.
+
+A person does not need to wait for a fixed number of hours before reporting a credible safety concern. Routine inability to contact a classmate without a specific risk indicator may be reported through the non-emergency line at extension 2001.
+
+HOSTEL EMERGENCY
+
+Call the hostel duty supervisor at extension 2401 for an urgent residential incident and Campus Security at extension 2000 for a threat to life, fire, violence, forced entry or another serious safety matter.
+
+Residents must keep corridors and exits clear and follow the instructions of the Warden, duty supervisor and emergency personnel. A maintenance request alone is not sufficient for an active electrical, water, fire or structural hazard.
+
+ELECTRICAL HAZARD, WATER LEAK OR STRUCTURAL DAMAGE
+
+Keep away from exposed wiring, standing water near electrical equipment, a damaged ceiling or another unstable area. Call Facilities Emergency at extension 2030 and notify Campus Security when people or access routes may be at risk.
+
+Do not operate switches, touch damaged equipment or attempt a repair. If instructed to leave the area, warn nearby occupants without delaying your own evacuation.
+
+GAS OR CHEMICAL ODOUR
+
+Leave the immediate area without operating electrical switches or creating a flame. From a safe location, call Campus Security at extension 2000 and Facilities Emergency at extension 2030.
+
+Provide the location and describe the smell, visible vapour, spill or container only from what can be observed safely. Do not attempt to identify or clean an unknown substance.
+
+SEVERE WEATHER
+
+Follow official alerts and move away from windows, trees, temporary structures and flooded areas as instructed. Do not enter water-covered roads or paths where the depth and electrical risk are unknown.
+
+Classes or examinations are not cancelled solely because informal messages circulate. Closure, relocation and schedule decisions are communicated through official Institute channels.
+
+CYBERSECURITY INCIDENT
+
+For suspected account compromise, phishing that involved disclosure of credentials, unauthorised portal activity or loss of a device containing Institute information, call the IT security line at extension 2601.
+
+Change the affected password from a trusted device when safe to do so. Do not delete suspicious messages or logs that may assist investigation. Never provide a one-time password to a person claiming to be support staff.
+
+MENTAL HEALTH CRISIS
+
+If a person appears to be in immediate danger of harming themselves or another person, stay at a safe distance, call Campus Security at extension 2000 and request medical assistance. Do not leave the person alone when it is safe to remain nearby.
+
+For urgent but non-immediate support during service hours, contact the Student Wellness Centre at extension 2160. Email is not an emergency channel.
+
+ACCESSIBILITY DURING AN EMERGENCY
+
+Students who have an approved personal emergency assistance arrangement should follow that plan and notify responders of the accommodation required. Anyone who cannot use the normal evacuation route should move to the designated refuge area where one is provided and communicate their location.
+
+OTHER STUDENTS must not carry or physically move a person unless instructed or immediate conditions make remaining in place more dangerous.
+
+AFTER AN INCIDENT
+
+Cooperate with safety instructions and preserve relevant records, photographs taken from a safe position, access logs or witness information. Do not publish identifying medical or personal information about affected people.
+
+An incident report may be required after the immediate danger has passed. Submitting a report does not replace contacting emergency responders during an active incident.
+
+DOCUMENT CONTROL
+
+The Campus Safety Office maintains this document. Emergency numbers displayed at the incident location and live instructions from authorised responders take precedence over this directory. Report an incorrect or unreachable campus number to security.office@northbridge.example after immediate safety needs have been addressed.
