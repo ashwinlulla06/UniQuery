@@ -1,6 +1,11 @@
-from paddleocr import PaddleOCR
-import numpy as np
+from pathlib import Path
+
 import cv2
+import numpy as np
+from paddleocr import PaddleOCR
+
+from config import PROOF_OF_OCR_DIR
+
 
 ocr = PaddleOCR(
     lang="en",
@@ -12,14 +17,13 @@ ocr = PaddleOCR(
     text_rec_score_thresh=0.0,
 )
 
+
 def image_processor(image_bgr, file_name):
-
     results = list(ocr.predict(image_bgr))
-
     records = []
 
     for result in results:
-        payload = result.json  # This can be a function or normal json output
+        payload = result.json
 
         if callable(payload):
             payload = payload()
@@ -31,7 +35,12 @@ def image_processor(image_bgr, file_name):
         polygons = list(data.get("rec_polys", []))
         boxes = list(data.get("rec_boxes", []))
 
-        for text, score, polygon, box in zip(texts, scores, polygons, boxes):
+        for text, score, polygon, box in zip(
+            texts,
+            scores,
+            polygons,
+            boxes,
+        ):
             text = text.strip()
 
             if not text:
@@ -51,27 +60,21 @@ def image_processor(image_bgr, file_name):
             )
 
     extracted_text = "\n".join(
-        record["text"]
-        for record in records
+        record["text"] for record in records
     )
-
     scores = [
-        record["confidence"]
-        for record in records
+        record["confidence"] for record in records
     ]
 
     if scores:
         mean_confidence = float(np.mean(scores))
         minimum_confidence = float(np.min(scores))
-
-        
         low_confidence_count = sum(
-            score < 0.80
-            for score in scores
+            score < 0.80 for score in scores
         )
-
-        low_confidence_ratio = low_confidence_count / len(scores)
-
+        low_confidence_ratio = (
+            low_confidence_count / len(scores)
+        )
     else:
         mean_confidence = 0.0
         minimum_confidence = 0.0
@@ -88,20 +91,26 @@ def image_processor(image_bgr, file_name):
         "line_count": len(records),
         "mean_confidence": mean_confidence,
         "minimum_confidence": minimum_confidence,
-        "low_confidence_count": (
-            low_confidence_count
-        ),
-        "low_confidence_ratio": (
-            low_confidence_ratio
-        ),
+        "low_confidence_count": low_confidence_count,
+        "low_confidence_ratio": low_confidence_ratio,
         "fallback_required": fallback_required,
     }
+
+    PROOF_OF_OCR_DIR.mkdir(
+        parents=True,
+        exist_ok=True,
+    )
+    safe_file_name = Path(file_name).name
 
     visualize_ocr(
         image_bgr=image_bgr,
         records=records,
-        output_path=f"proof_of_ocr/{file_name}.png"
+        output_path=(
+            PROOF_OF_OCR_DIR
+            / f"{safe_file_name}.png"
+        ),
     )
+
     return extracted_text, records, quality
 
 
@@ -109,54 +118,52 @@ def visualize_ocr(image_bgr, records, output_path):
     output = image_bgr.copy()
 
     for record in records:
-        box = np.asarray(record["box"], dtype=np.int32)
+        box = np.asarray(
+            record["box"],
+            dtype=np.int32,
+        )
 
         x1, y1, x2, y2 = map(
             int,
-            box.tolist()
+            box.tolist(),
         )
 
         score = float(record["confidence"])
 
         if score >= 0.90:
-            color = (0, 255, 0)       # Green
-
+            color = (0, 255, 0)
         elif score >= 0.70:
-            color = (0, 165, 255)     # Orange
-
+            color = (0, 165, 255)
         else:
-            color = (0, 0, 255)       # Red
-
+            color = (0, 0, 255)
 
         cv2.rectangle(
-            img = output,
-            pt1 = (x1, y1),
-            pt2 = (x2, y2),
-            color = color,
-            thickness = 2
+            img=output,
+            pt1=(x1, y1),
+            pt2=(x2, y2),
+            color=color,
+            thickness=2,
         )
 
-        label = f"{score:.2f}"
-
         cv2.putText(
-            img = output,
-            text = label,
-            org = (x1, max(y1 - 5, 15)),
-            fontFace = cv2.FONT_HERSHEY_SIMPLEX,
-            fontScale = 0.5,
-            color = color,
-            thickness = 2,
+            img=output,
+            text=f"{score:.2f}",
+            org=(x1, max(y1 - 5, 15)),
+            fontFace=cv2.FONT_HERSHEY_SIMPLEX,
+            fontScale=0.5,
+            color=color,
+            thickness=2,
         )
 
     saved = cv2.imwrite(
         str(output_path),
-        output
+        output,
     )
 
     if not saved:
         print(
-            f"Warning: annotated image could not be "
-            f"saved to {output_path}"
+            "Warning: annotated image could not "
+            f"be saved to {output_path}"
         )
 
     return output
