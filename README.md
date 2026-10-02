@@ -106,8 +106,6 @@ Create a `.env` file in the project root:
 GOOGLE_API_KEY=your_google_ai_api_key
 ```
 
-Do not commit the `.env` file or your API key.
-
 ## Start the local embedding server
 
 The embedding client in `embeddings.py` expects an OpenAI-compatible llama.cpp server at `http://127.0.0.1:8081`.
@@ -197,17 +195,3 @@ The JSONL files also retain unanswerable questions for future testing of grounde
 **Grounded generation.** Gemini receives the retrieved passages and conversation history. The system prompt instructs it to answer from the supplied context and acknowledge when the documents do not resolve the question.
 
 **Reproducible evaluation.** Each golden question stores the relevant chunk IDs. Separate datasets are maintained because changing the chunking strategy changes those IDs.
-
-## Current limitations
-
-- OCR quality still depends on scan resolution, orientation, and document noise.
-- The current OCR confidence checks flag weak extraction but do not automatically invoke a vision-language fallback.
-- The embedding server and Gemini service must both be available while the assistant runs.
-- The synthetic knowledge base is intentionally small and does not represent a production university corpus.
-- Retrieval labels generated for one chunking configuration cannot be reused unchanged for another.
-
-## Repository
-
-Suggested repository name: **`university-advanced-rag-assistant`**
-
-Current project name: **UniQuery**
