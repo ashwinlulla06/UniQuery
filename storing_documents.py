@@ -31,7 +31,7 @@ def main():
             )
 
     print(
-        f"Saved {len(documents)} documents "
+        f"Saved {len(documents)} documents"
         f"to {DOCUMENT_CACHE_PATH}"
     )
 
