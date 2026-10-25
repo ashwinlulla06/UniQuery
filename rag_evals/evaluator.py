@@ -5,10 +5,11 @@ from collections import defaultdict
 from dotenv import load_dotenv
 
 from rag_evals.evaluating_retrieval import evaluate_all_retrieval
+from rag_evals.evaluating_answer import evaluate_all_answers
 
 load_dotenv(override=True)
 
-# Color coding threshold - Retrieval
+# Color coding thresholds - Retrieval
 MRR_GREEN = 0.9
 MRR_AMBER = 0.75
 NDCG_GREEN = 0.9
@@ -168,6 +169,87 @@ def run_retrieval_evaluation(progress=gr.Progress()):
     return final_html, figure
 
 
+def run_answer_evaluation(progress=gr.Progress()):
+    """Run answer evaluation and return summary metrics and a chart."""
+    totals = {
+        "Accuracy": 0.0,
+        "Completeness": 0.0,
+        "Relevance": 0.0,
+    }
+    category_scores = defaultdict(lambda: defaultdict(list))
+    count = 0
+
+    for test, result, prog_value in evaluate_all_answers():
+        count += 1
+
+        scores = {
+            "Accuracy": result.accuracy,
+            "Completeness": result.completeness,
+            "Relevance": result.relevance,
+        }
+
+        for metric, score in scores.items():
+            totals[metric] += score
+            category_scores[test.category][metric].append(score)
+
+        progress(prog_value, desc=f"Evaluating answer {count}...")
+
+    if count == 0:
+        empty_html = """
+        <div style="padding: 20px; text-align: center; color: #999;">
+            No answerable test questions were found.
+        </div>
+        """
+        return empty_html, None
+
+    averages = {
+        metric: total / count
+        for metric, total in totals.items()
+    }
+
+    final_html = f"""
+    <div style="padding: 0;">
+        {format_metric_html("Accuracy", averages["Accuracy"], "accuracy", score_format=True)}
+        {format_metric_html("Completeness", averages["Completeness"], "completeness", score_format=True)}
+        {format_metric_html("Relevance", averages["Relevance"], "relevance", score_format=True)}
+        <div style="margin-top: 20px; padding: 10px; background-color: #d4edda; border-radius: 5px; text-align: center; border: 1px solid #c3e6cb;">
+            <span style="font-size: 14px; color: #155724; font-weight: bold;">✓ Answer Evaluation Complete: {count} tests</span>
+        </div>
+    </div>
+    """
+
+    category_data = []
+
+    for category, metrics in category_scores.items():
+        for metric, scores in metrics.items():
+            category_data.append(
+                {
+                    "Category": category,
+                    "Metric": metric,
+                    "Average Score": sum(scores) / len(scores),
+                }
+            )
+
+    figure = px.bar(
+        pd.DataFrame(category_data),
+        x="Category",
+        y="Average Score",
+        color="Metric",
+        barmode="group",
+        title="Average Answer Metrics by Category",
+        range_y=[1, 5],
+        template="plotly_dark",
+    )
+
+    figure.update_layout(
+        height=450,
+        xaxis_tickangle=-20,
+        legend_title_text="Metric",
+    )
+
+    return final_html, figure
+
+
 def main():
     """Launch the Gradio evaluation app."""
     theme = gr.themes.Soft(font=["Inter", "system-ui", "sans-serif"])
@@ -190,25 +272,19 @@ def main():
             with gr.Column(scale=1):
                 retrieval_chart = gr.Plot()
 
-        # # ANSWERING SECTION
-        # gr.Markdown("## 💬 Answer Evaluation")
+        # ANSWERING SECTION
+        gr.Markdown("## 💬 Answer Evaluation")
 
-        # answer_button = gr.Button("Run Evaluation", variant="primary", size="lg")
+        answer_button = gr.Button("Run Evaluation", variant="primary", size="lg")
 
-        # with gr.Row():
-        #     with gr.Column(scale=1):
-        #         answer_metrics = gr.HTML(
-        #             "<div style='padding: 20px; text-align: center; color: #999;'>Click 'Run Evaluation' to start</div>"
-        #         )
+        with gr.Row():
+            with gr.Column(scale=1):
+                answer_metrics = gr.HTML(
+                    "<div style='padding: 20px; text-align: center; color: #999;'>Click 'Run Evaluation' to start</div>"
+                )
 
-        #     with gr.Column(scale=1):
-        #         answer_chart = gr.BarPlot(
-        #             x="Category",
-        #             y="Average Accuracy",
-        #             title="Average Accuracy by Category",
-        #             y_lim=[1, 5],
-        #             height=400,
-        #         )
+            with gr.Column(scale=1):
+                answer_chart = gr.Plot()
 
         # Wire up the evaluations
         retrieval_button.click(
@@ -216,12 +292,12 @@ def main():
             outputs=[retrieval_metrics, retrieval_chart],
         )
 
-        # answer_button.click(
-        #     fn=run_answer_evaluation,
-        #     outputs=[answer_metrics, answer_chart],
-        # )
+        answer_button.click(
+            fn=run_answer_evaluation,
+            outputs=[answer_metrics, answer_chart],
+        )
 
-    app.launch(inbrowser=True, share=True)
+    app.launch(inbrowser=True)
 
 
 if __name__ == "__main__":

@@ -3,6 +3,7 @@ from rag_evals.test_question import get_test_questions, TestQuestion
 from pydantic import BaseModel, Field
 import math
 from reranking.reranker import rerank_documents
+from retrieving_and_answering.query_rewriting import rewrite_query
 import config
 
 """
@@ -46,7 +47,7 @@ def calculate_ndcg(rel_chunk_ids : list, retrieved_docs : list, k : int = 5):
 
     dcg = calculate_dcg(relevance, k)
 
-    num_relevant = min(len(rel_chunk_ids), k)  # Getting total number of relevant chunks for the questions
+    num_relevant = min(len(rel_chunk_ids), k)  # Getting total number of relevant chunks for the question
 
     ideal_relevance = [1] * num_relevant + [0] * (k - num_relevant)  # making the ideal_relevance looks like: [1, 1, 1, 0, 0] if total relevant chunks are 3!
 
@@ -85,13 +86,19 @@ def calculate_precision(rel_chunk_ids, retrieved_docs):
     
     
 def evaluate_retrieval(test : TestQuestion, k : int = 5) -> RetrievalEval:
+    search_query = rewrite_query(test.question, test.conversation_history)
 
     semantic_docs = semantic_retriever.fetch_documents(test.question)
     bm25_docs = bm25_retriever.keyword_retriever(test.question)
 
-    retrieved_docs = rrf.reciprocal_rank_fusion([bm25_docs, semantic_docs])
+    result_lists = [bm25_docs, semantic_docs]
+    if search_query != test.question.strip():
+        result_lists.append(bm25_retriever.keyword_retriever(search_query)[:5])
+        result_lists.append(semantic_retriever.fetch_documents(search_query)[:5])
 
-    reranked_docs = rerank_documents(test.question, retrieved_docs)
+    retrieved_docs = rrf.reciprocal_rank_fusion(result_lists)
+
+    reranked_docs = rerank_documents(search_query, retrieved_docs)
 
     mrr_score = calculate_mrr(reranked_docs, test.relevant_chunk_ids)
     ndcg_score = calculate_ndcg(test.relevant_chunk_ids, reranked_docs, k)
