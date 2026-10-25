@@ -46,7 +46,7 @@ def calculate_ndcg(rel_chunk_ids : list, retrieved_docs : list, k : int = 5):
 
     dcg = calculate_dcg(relevance, k)
 
-    num_relevant = min(len(rel_chunk_ids), k)  # Getting total number of relevant chunks for the question
+    num_relevant = min(len(rel_chunk_ids), k)  # Getting total number of relevant chunks for the questions
 
     ideal_relevance = [1] * num_relevant + [0] * (k - num_relevant)  # making the ideal_relevance looks like: [1, 1, 1, 0, 0] if total relevant chunks are 3!
 

@@ -8,7 +8,7 @@ from rag_evals.evaluating_retrieval import evaluate_all_retrieval
 
 load_dotenv(override=True)
 
-# Color coding thresholds - Retrieval
+# Color coding threshold - Retrieval
 MRR_GREEN = 0.9
 MRR_AMBER = 0.75
 NDCG_GREEN = 0.9
