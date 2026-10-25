@@ -1,10 +1,12 @@
 import requests
 from langchain_core.embeddings import Embeddings
 
+from config import EMBEDDING_REQUEST_TIMEOUT, EMBEDDING_SERVER_URL
 
-SERVER_URL = "http://127.0.0.1:8081"
+
 QUERY_INSTRUCTION = (
-    "Instruct: Given a web search query, retrieve relevant passages that answer the query\nQuery:"
+    "Instruct: Given a web search query, retrieve relevant passages "
+    "that answer the query\nQuery:"
 )
 
 
@@ -16,12 +18,11 @@ class GGUFEmbeddings(Embeddings):
 
     def embed_text(self, text):
         response = self.session.post(
-            f"{SERVER_URL}/v1/embeddings",
+            f"{EMBEDDING_SERVER_URL}/v1/embeddings",
             json={"input": text.replace("\n", " ")},
-            timeout=120,
+            timeout=EMBEDDING_REQUEST_TIMEOUT,
         )
         response.raise_for_status()
-
         return response.json()["data"][0]["embedding"]
 
     def embed_documents(self, texts):
