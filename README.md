@@ -1,22 +1,14 @@
 # UniQuery
 
-UniQuery is an advanced retrieval-augmented generation (RAG) assistant for university policies, notices, regulations, and student-service documents. It accepts several document formats, retrieves supporting passages through both semantic and keyword search, reranks them, and generates a grounded answer with source context.
+UniQuery is an advanced retrieval-augmented generation (RAG) assistant for
+university policies, notices, regulations, and student-service documents. It
+processes native and scanned documents, combines semantic and keyword
+retrieval, reranks candidates, and produces grounded answers with source
+context.
 
-This repository is an academic project. The Northbridge Institute of Technology documents in `knowledge-base/` are synthetic and are intended only for development, demonstration, and evaluation. They are not official policies of a real institution.
-
-## What the project demonstrates
-
-- Processing native-text PDFs, scanned PDFs, TXT, Markdown, PNG, JPG, and JPEG files
-- Extracting scanned text with PaddleOCR and recording confidence scores and bounding boxes
-- Caching extracted pages so OCR does not run during every experiment
-- Comparing recursive character chunking with page-level and file-level semantic chunking
-- Generating embeddings locally with a quantized Qwen GGUF model served by llama.cpp
-- Persisting embeddings and metadata in Chroma
-- Combining BM25 keyword retrieval and vector retrieval
-- Merging ranked results with Reciprocal Rank Fusion (RRF)
-- Reranking candidates with `Qwen/Qwen3-Reranker-0.6B`
-- Producing grounded answers with Gemini and displaying the supporting context
-- Evaluating retrieval with MRR, nDCG, Recall@K, Hit Rate@K, and Precision@1
+The Northbridge Institute of Technology documents in `knowledge-base/` are
+synthetic and are intended only for academic development, demonstration, and
+evaluation.
 
 ## Pipeline
 
@@ -45,153 +37,205 @@ Student query ------------------+
                      Gradio UI
 ```
 
-## Knowledge base
+## Main features
 
-The project contains 30 synthetic university documents grouped into ten areas:
-
-```text
-academic/       attendance/     career/          courses/
-examinations/   fees/           hostel/          library/
-scholarships/   student-services/
-```
-
-The collection deliberately mixes native documents and scanned material so that both ordinary text extraction and OCR can be tested.
+- Native PDFs, scanned PDFs, TXT, Markdown, PNG, JPG, and JPEG
+- PaddleOCR text extraction with confidence scores and bounding boxes
+- Cached extracted pages for repeatable chunking experiments
+- Recursive, page-level semantic, and file-level semantic chunking
+- Qwen GGUF embeddings served locally through llama.cpp
+- Chroma vector storage and BM25 keyword retrieval
+- Reciprocal Rank Fusion and Qwen reranking
+- Selective query rewriting when the local TinyLlama model is cached
+- Grounded Gemini answers and a Gradio interface
+- MRR, nDCG, Recall@K, Hit Rate@K, and Precision@1 evaluation
+- Optional Qwen-judged answer evaluation (accuracy, completeness, relevance)
 
 ## Project structure
 
 ```text
 UniQuery/
-|-- app.py                         Gradio assistant
-|-- config.py                      Active vector store and question set
-|-- embeddings.py                  llama.cpp embedding client
-|-- storing_documents.py           Document extraction and cache creation
-|-- document_processing/           PDF, image, text, and Markdown processing
-|-- chunking/                      Recursive and semantic chunkers
-|-- vector_stores/                 Chroma creation and persisted stores
-|-- retrieving_and_answering/      BM25, vector search, RRF, and answer generation
-|-- reranking/                     Cross-encoder reranking
-|-- rag_evals/                     Golden questions and evaluation dashboard
-|-- knowledge-base/                Synthetic university source documents
-|-- proof_of_ocr/                  OCR visualizations
-|-- visualizations/                Embedding and chunking plots
-`-- requirements.txt
+|-- app.py
+|-- config.py
+|-- embeddings.py
+|-- storing_documents.py
+|-- document_processing/
+|-- chunking/
+|-- vector_stores/
+|-- retrieving_and_answering/
+|-- reranking/
+|-- rag_evals/
+|-- knowledge-base/
+|-- proof_of_ocr/
+|-- .env.example
+|-- requirements.txt
+`-- requirements-cpu.txt
 ```
 
-## Requirements
+## Setup
+
+Requirements:
 
 - Python 3.12
-- Windows PowerShell commands are shown below
 - llama.cpp with `llama-server`
 - A Qwen embedding model in GGUF format
-- A Google AI API key for answer generation
-- An NVIDIA GPU is recommended for the Qwen reranker; PaddleOCR is configured to use the CPU
+- A Google AI API key
+- Access to this private repository
 
-The pinned environment uses the CUDA-enabled PyTorch build listed in `requirements.txt`. If that build is not supported by your machine, install the appropriate PyTorch version for your CUDA setup before installing the remaining packages.
+### 1. Clone and create an environment
 
-## Installation
+Windows PowerShell:
 
 ```powershell
-git clone https://github.com/ashwinlulla06/UniQuery.git
-cd UniQuery
-
+git clone https://github.com/ashwinlulla06/UniQuery---Private.git
+cd UniQuery---Private
 python -m venv .venv
 .\.venv\Scripts\Activate.ps1
 python -m pip install --upgrade pip
 python -m pip install -r requirements.txt
+Copy-Item .env.example .env
 ```
 
-Create a `.env` file in the project root:
+Linux or macOS:
+
+```bash
+git clone https://github.com/ashwinlulla06/UniQuery---Private.git
+cd UniQuery---Private
+python3 -m venv .venv
+source .venv/bin/activate
+python -m pip install --upgrade pip
+python -m pip install -r requirements-cpu.txt
+cp .env.example .env
+```
+
+`requirements.txt` represents the project's Windows CUDA environment.
+`requirements-cpu.txt` is the CPU-oriented alternative. If a pinned framework
+wheel is unavailable for a particular OS, install its compatible official
+wheel first.
+
+### 2. Configure local settings
+
+Edit `.env`:
 
 ```env
 GOOGLE_API_KEY=your_google_ai_api_key
+EMBEDDING_SERVER_URL=http://127.0.0.1:8081
+RERANKER_DEVICE=auto
 ```
 
-## Start the local embedding server
+The application resolves relative paths from the repository root, so it can be
+launched from another working directory. Machine-specific paths and secrets
+belong in `.env`, which Git ignores.
 
-The embedding client in `embeddings.py` expects an OpenAI-compatible llama.cpp server at `http://127.0.0.1:8081`.
+### 3. Start the embedding server
+
+The server can be launched from any directory:
 
 ```powershell
-<path-to-llama-server.exe> -m "<path-to-qwen-embedding-model.gguf>" --embedding --host 127.0.0.1 --port 8081
+llama-server `
+  -hf "Qwen/Qwen3-Embedding-4B-GGUF:Q4_K_M" `
+  --embedding `
+  --pooling last `
+  --host 127.0.0.1 `
+  --port 8081 `
+  --no-webui
 ```
 
-Keep this terminal open while creating vector stores, running evaluations, or using the assistant. Model-specific llama.cpp builds may also require a pooling option; use the option recommended by the selected Qwen GGUF model card.
+For CPU-only execution, add `--device none --threads 6`. See
+[EMBEDDINGS.md](EMBEDDINGS.md) for Linux/macOS syntax and configuration.
 
-## Prepare the documents
-
-Run extraction once to process the knowledge base and create `document-cache/extracted_documents.jsonl`:
+### 4. Extract documents
 
 ```powershell
 python -m storing_documents
 ```
 
-Later chunking experiments read this cache directly, which avoids repeating CPU OCR for every run.
+This writes `document-cache/extracted_documents.jsonl`. The cache avoids
+repeating OCR for every chunking experiment.
 
-To build the current page-level semantic vector store:
+### 5. Build a vector store
+
+Example recursive-character experiment:
+
+```powershell
+python -c "from chunking.rec_char_chunking import rec_char_chunking; from vector_stores.storing_vectors import storing_vectors; storing_vectors(rec_char_chunking(400, 75), 'vector_stores/rec_char_400')"
+```
+
+Example page-level semantic experiment:
 
 ```powershell
 python -c "from chunking.page_level_semantic_chunking import page_level_chunking; from vector_stores.storing_vectors import storing_vectors; storing_vectors(page_level_chunking(), 'vector_stores/page_level_semantic')"
 ```
 
-Other available strategies can be created with the same storage function:
+Vector databases are generated locally and are not committed. Rebuild them
+whenever the embedding model changes.
 
-```python
-from chunking.rec_char_chunking import rec_char_chunking
-from chunking.file_level_semantic_chunking import file_level_chunking
-from vector_stores.storing_vectors import storing_vectors
+### 6. Select the matching experiment
 
-storing_vectors(rec_char_chunking(400, 75), "vector_stores/rec_char_400")
-storing_vectors(file_level_chunking(), "vector_stores/file_level_semantic")
+Set these values in `.env`:
+
+```env
+DB_NAME=vector_stores/page_level_semantic
+QUESTION_SET=rag_evals/questions/test_page_level_semantic_percentile_95.jsonl
 ```
 
-Building a store replaces the existing Chroma collection at that destination. Keep the embedding model unchanged when comparing stores because chunk IDs and vectors are tied to the selected configuration.
+The vector store and golden dataset must use the same chunking method and
+settings because chunk IDs depend on those choices.
 
-## Select an experiment
-
-`config.py` selects the vector store used by retrieval and the matching JSONL question set used by evaluation:
-
-```python
-DB_NAME = "vector_stores/page_level_semantic"
-QUESTION_SET = "rag_evals/questions/test_page_level_semantic_percentile_95.jsonl"
-```
-
-Always pair a question set with the vector store built from the same chunking method and settings. The repository includes question sets for:
-
-- Recursive character splitting: 1000/200, 500/100, 400/75, and 300/50 chunk size/overlap
-- Page-level semantic splitting: percentile threshold 95
-- File-level semantic splitting: percentile threshold 95
-
-## Run the assistant
-
-Start the embedding server first, then run:
+### 7. Run
 
 ```powershell
 python app.py
 ```
 
-Open the local Gradio address printed in the terminal. A query is sent through vector retrieval and BM25, fused with RRF, reranked, and then passed to Gemini with the retrieved context. The interface displays both the answer and its supporting passages.
-
-## Run retrieval evaluation
+Evaluation:
 
 ```powershell
 python -m rag_evals.evaluator
 ```
 
-The evaluation dashboard uses the question set selected in `config.py`. It currently evaluates answerable questions and reports:
+Answer evaluation requires `QWEN_API_KEY` (a Groq API key) in `.env`. The
+query rewriter uses a locally cached TinyLlama model and will continue with
+the original query if those weights are not present. It does not download the
+model automatically. The embedding model and `llama-server` still need to be
+installed and started separately before running the assistant.
 
-- **MRR:** how early the first relevant chunk appears
-- **nDCG:** the quality of the overall ranking
-- **Recall@K:** how many labelled relevant chunks were retrieved
-- **Hit Rate@K:** whether at least one relevant chunk was retrieved
-- **Precision@1:** whether the top-ranked chunk was relevant
+## Portable configuration
 
-The JSONL files also retain unanswerable questions for future testing of grounded refusal and no-answer behaviour.
+The following environment variables may be overridden without editing source
+code:
 
-## Main design choices
+- `KNOWLEDGE_BASE_DIR`
+- `DOCUMENT_CACHE_PATH`
+- `PROOF_OF_OCR_DIR`
+- `DB_NAME`
+- `QUESTION_SET`
+- `EMBEDDING_SERVER_URL`
+- `EMBEDDING_REQUEST_TIMEOUT`
+- `RERANKER_MODEL`
+- `RERANKER_DEVICE`
+- `RERANKER_BATCH_SIZE`
+- `HF_HOME`
+- `QUERY_REWRITE_MODEL`
 
-**Hybrid retrieval.** Vector search handles semantic similarity, while BM25 helps with exact terms such as notice numbers, dates, course codes, and policy names.
+`RERANKER_DEVICE=auto` selects CUDA when available, Apple MPS on a compatible
+Mac, and otherwise the CPU.
 
-**RRF and reranking.** Reciprocal Rank Fusion combines the two retrieval rankings without requiring their raw scores to be directly comparable. A cross-encoder then scores the fused candidates against the query and returns the five strongest passages.
+## Evaluation datasets
 
-**Grounded generation.** Gemini receives the retrieved passages and conversation history. The system prompt instructs it to answer from the supplied context and acknowledge when the documents do not resolve the question.
+The repository includes golden datasets for:
 
-**Reproducible evaluation.** Each golden question stores the relevant chunk IDs. Separate datasets are maintained because changing the chunking strategy changes those IDs.
+- Recursive character splitting: 1000/200, 500/100, 400/75, and 300/50
+- Page-level semantic splitting: percentile threshold 95
+- File-level semantic splitting: percentile threshold 95
+
+Unanswerable questions remain in the datasets for future grounded-refusal
+testing, while the current retrieval dashboard evaluates answerable questions.
+
+## Limitations
+
+- OCR quality depends on scan resolution, orientation, and noise.
+- Weak OCR is flagged, but a vision-language fallback is not yet automatic.
+- The embedding server and Gemini API must be available while the app runs.
+- The synthetic knowledge base is intentionally small.
+- Changing chunking or embeddings can invalidate stored chunk IDs and vectors.
