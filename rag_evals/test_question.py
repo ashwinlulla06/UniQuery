@@ -9,6 +9,7 @@ class TestQuestion(BaseModel):
     keywords : list[str] = Field(description = "The answer must contain these keywords")
     relevant_chunk_ids : list[str] = Field(description = "Chunk ids of the relevant chunks based on the question")
     category : str = Field(description = "Category of the question, in which it belongs")
+    conversation_history : list[dict] = Field(default_factory=list)
 
 TEST_FILE = config.QUESTION_SET
 
