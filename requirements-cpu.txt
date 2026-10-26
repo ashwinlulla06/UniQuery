@@ -1,0 +1,44 @@
+# UniQuery CPU dependencies
+# Tested with Python 3.12 on Windows.
+
+# CPU-only PyTorch wheels
+--extra-index-url https://download.pytorch.org/whl/cpu
+
+# Interface and configuration
+gradio==6.26.0
+python-dotenv==1.2.3
+
+# LangChain and retrieval
+langchain-core==1.6.0
+langchain-classic==1.0.8
+langchain-community==0.4.2
+langchain-experimental==0.4.2
+langchain-text-splitters==1.1.2
+langchain-chroma==1.1.0
+langchain-google-genai==4.3.5
+rank-bm25==0.2.2
+
+# CPU embeddings and reranking
+torch==2.13.0+cpu
+sentence-transformers==6.0.0
+transformers==5.16.1
+
+# CPU OCR and document processing
+paddlepaddle==3.3.0
+paddleocr==3.7.0
+opencv-contrib-python==4.10.0.84
+PyMuPDF==1.28.2
+pypdf==6.16.2
+
+# Data, evaluation, and visualization
+numpy==2.3.5
+pandas==3.0.5
+pydantic==2.13.4
+scikit-learn==1.9.0
+plotly==7.0.0
+requests==2.34.2
+
+# External prerequisites not installed by pip:
+# - CPU build of llama.cpp llama-server
+# - A Qwen embedding model in GGUF format
+# - GOOGLE_API_KEY in the project's .env file
