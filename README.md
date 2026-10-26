@@ -231,11 +231,3 @@ The repository includes golden datasets for:
 
 Unanswerable questions remain in the datasets for future grounded-refusal
 testing, while the current retrieval dashboard evaluates answerable questions.
-
-## Limitations
-
-- OCR quality depends on scan resolution, orientation, and noise.
-- Weak OCR is flagged, but a vision-language fallback is not yet automatic.
-- The embedding server and Gemini API must be available while the app runs.
-- The synthetic knowledge base is intentionally small.
-- Changing chunking or embeddings can invalidate stored chunk IDs and vectors.
