@@ -6,10 +6,11 @@ from reranking.reranker import rerank_documents
 from retrieving_and_answering import semantic_retriever, rrf, bm25_retriever
 from retrieving_and_answering.query_rewriting import rewrite_query
 import config
+import re
 
 load_dotenv(override=True)
 
-MODEL = 'gemini-3.1-flash-lite'
+MODEL = 'gemini-3.5-flash-lite'
 DB_NAME = config.DB_NAME
 
 llm = ChatGoogleGenerativeAI(
@@ -38,7 +39,13 @@ Context:
 """
 
 
-def answer_question(question, history=None) -> tuple[str, list[Document]]:
+def answer_question(question, history=None):
+    if re.fullmatch(r"(hi|hello|hey|hey there|good morning|good evening|)[!?.\s]*",
+                    question.strip(), re.IGNORECASE):
+        return "Hello! How can I help with university information?", []
+    if re.fullmatch(r"(what's up|what's new|what's happening|who are you|what do you do)[!?.\s]*",
+                    question.strip(), re.IGNORECASE):
+        return "Hello! I am Northbridge University's chatbot, here to assist you with any questions you may have about the university.", []
     history = history or []
     search_query = rewrite_query(question, history)
 
