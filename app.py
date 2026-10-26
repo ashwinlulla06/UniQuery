@@ -54,10 +54,34 @@ html, body, .gradio-container {
 #conversation { border: 0 !important; background: var(--surface) !important; border-radius: 0 !important; min-width: 0 !important; overflow-x: hidden !important; }
 #conversation .bubble-wrap { background: var(--surface) !important; color: var(--text) !important; overflow-x: hidden !important; }
 #conversation .message-wrap, #conversation .message-row, #conversation .message-content, #conversation .md { max-width: 100% !important; box-sizing: border-box; }
-#conversation .bot-row { width: 100% !important; }
+#conversation .message-row.bot-row {
+    width: auto !important;
+    max-width: calc(100% - 4 * var(--spacing-xl)) !important;
+    min-width: 0 !important;
+}
+
+#conversation .message.bot,
+#conversation .message.bot .prose {
+    min-width: 0 !important;
+    max-width: 100% !important;
+    white-space: normal !important;
+    overflow-wrap: anywhere !important;
+}
 #conversation .message.user { background: #eaf0e9 !important; color: var(--ink) !important; border: 0 !important; box-shadow: none !important; border-radius: 17px 17px 5px 17px !important; }
 #conversation .message.user *, #conversation .message.bot * { color: inherit !important; }
 #conversation .message.bot { background: transparent !important; color: #142019 !important; border: 0 !important; box-shadow: none !important; }
+#conversation .message-row,
+#conversation .message-content {
+    min-width: 0 !important;
+}
+
+#conversation .message.bot,
+#conversation .message.bot .md,
+#conversation .message.bot .md p {
+    max-width: 100% !important;
+    white-space: normal !important;
+    overflow-wrap: anywhere !important;
+}
 #conversation .placeholder, #conversation .placeholder p { color: var(--muted) !important; }
 #conversation .message.bot a { color: var(--copper) !important; }
 #conversation .message-buttons button { color: var(--ink) !important; visibility: visible !important; opacity: 1 !important; }
@@ -211,7 +235,7 @@ def main():
     ui.launch(
         inbrowser=True,
         theme=theme,
-        css=WARM_CSS,
+        css=WARM_CSS
     )
 
 
