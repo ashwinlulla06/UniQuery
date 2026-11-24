@@ -46,7 +46,7 @@ Student query ------------------+
 - Qwen GGUF embeddings served locally through llama.cpp
 - Chroma vector storage and BM25 keyword retrieval
 - Reciprocal Rank Fusion and Qwen reranking
-- Selective query rewriting when the local TinyLlama model is cached
+- Selective rule-based query rewriting without an additional language model
 - Grounded Gemini answers and a Gradio interface
 - MRR, nDCG, Recall@K, Hit Rate@K, and Precision@1 evaluation
 - Optional Qwen-judged answer evaluation (accuracy, completeness, relevance)
@@ -194,11 +194,7 @@ Evaluation:
 python -m rag_evals.evaluator
 ```
 
-Answer evaluation requires `QWEN_API_KEY` (a Groq API key) in `.env`. The
-query rewriter uses a locally cached TinyLlama model and will continue with
-the original query if those weights are not present. It does not download the
-model automatically. The embedding model and `llama-server` still need to be
-installed and started separately before running the assistant.
+Answer evaluation requires `QWEN_API_KEY` (a Groq API key) in `.env`. The query rewriter uses lightweight Python rules and does not require an additional model. The GGUF embedding model and llama-server must still be set up separately.
 
 ## Portable configuration
 
@@ -216,7 +212,6 @@ code:
 - `RERANKER_DEVICE`
 - `RERANKER_BATCH_SIZE`
 - `HF_HOME`
-- `QUERY_REWRITE_MODEL`
 
 `RERANKER_DEVICE=auto` selects CUDA when available, Apple MPS on a compatible
 Mac, and otherwise the CPU.
