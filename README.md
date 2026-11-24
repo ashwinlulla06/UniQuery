@@ -87,8 +87,8 @@ Requirements:
 Windows PowerShell:
 
 ```powershell
-git clone https://github.com/ashwinlulla06/UniQuery---Private.git
-cd UniQuery---Private
+git clone https://github.com/ashwinlulla06/UniQuery.git
+cd UniQuery
 python -m venv .venv
 .\.venv\Scripts\Activate.ps1
 python -m pip install --upgrade pip
